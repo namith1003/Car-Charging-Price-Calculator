@@ -1,3 +1,7 @@
+from datetime import date
+from workalendar.oceania import Australia
+import holidays
+
 class Calculator():
     # you can choose to initialise variables here, if needed.
     def __init__(self):
@@ -26,13 +30,22 @@ class Calculator():
 
     # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
     def is_holiday(self, start_date):
-        pass
+        d = start_date.split('/')
+        day = int(d[0])
+        month = int(d[1])
+        year = int(d[2])
+        aus = Australia()
 
-    def is_peak(self):
-        pass
+        return aus.is_working_day(date(year, month, day)) == False
+
+    def is_peak(self, start_time):
+        t = start_time.split(':')
+        hour = int(t[0])
+
+        return hour<18 & hour>5
 
     def peak_period(self, start_time):
-        pass
+        pass 
 
     def get_duration(self, start_time):
         pass

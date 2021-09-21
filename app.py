@@ -31,6 +31,8 @@ def operation_result():
         start_time = request.form['StartTime']
         charger_configuration = request.form['ChargerConfiguration']
 
+        
+
         # you may change the logic as your like
         duration = calculator.get_duration(start_time)
 
