@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, TimeField
 from wtforms.validators import DataRequired, ValidationError, Optional
 
+
 # validation for form inputs
 class Calculator_Form(FlaskForm):
     # this variable name needs to match with the input attribute name in the html file
@@ -26,17 +27,17 @@ class Calculator_Form(FlaskForm):
     def validate_InitialCharge(self, field):
         # another example of how to compare initial charge with final charge
         # you may modify this part of the code
-        if field.data > self.FinalCharge.data:
+        if int(field.data) > self.FinalCharge.data:
             raise ValueError("Initial charge data error")
-        if (field.data > 100) | (field.data < 0):
+        if (int(field.data) > 100) | (int(field.data) < 0):
             raise ValueError("Initial charge data error")
 
     # validate final charge here
     def validate_FinalCharge(self, field):
-        if field.data < self.InitialCharge.data:
+        if int(field.data) < self.InitialCharge.data:
             raise ValueError("Final charge data error")
 
-        if (field.data > 100) | (field.data < 0):
+        if (int(field.data) > 100) | (int(field.data) < 0):
             raise ValueError("Final charge data error")
 
     # validate start date here
@@ -49,7 +50,10 @@ class Calculator_Form(FlaskForm):
 
     # validate charger configuration here
     def validate_ChargerConfiguration(self, field):
-        pass
+        configurations = [1, 2, 3, 4, 5, 6, 7, 8]
+
+        if int(field.data) not in configurations:
+            raise ValueError("Charger Configuration data error")
 
     # validate postcode here
     def validate_PostCode(self, field):
