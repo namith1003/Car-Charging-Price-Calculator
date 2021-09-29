@@ -27,7 +27,6 @@ class Calculator():
         time = (final_state - initial_state) / 100 * capacity / power
         return time
 
-
     # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
     def is_holiday(self, start_date):
         d = start_date.split('/')
@@ -72,5 +71,3 @@ class Calculator():
 
     def calculate_solar_energy(self):
         pass
-
-

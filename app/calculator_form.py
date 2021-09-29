@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, TimeField
 from wtforms.validators import DataRequired, ValidationError, Optional
@@ -15,8 +14,6 @@ class Calculator_Form(FlaskForm):
     ChargerConfiguration = StringField("Charger Configuration", [DataRequired()])
     PostCode = StringField("Post Code", [DataRequired()])
 
-    
-
     # use validate_ + field_name to activate the flask-wtforms built-in validator
     # this is an example for you
     def validate_BatteryPackCapacity(self, field):
@@ -29,36 +26,21 @@ class Calculator_Form(FlaskForm):
     def validate_InitialCharge(self, field):
         # another example of how to compare initial charge with final charge
         # you may modify this part of the code
-        i = int(field.data)
-        f = int(self.FinalCharge.data)
-        if (i > f) | (i < 0) | (i > 100):
+        if field.data > self.FinalCharge.data:
             raise ValueError("Initial charge data error")
-        
+        if (field.data > 100) | (field.data < 0):
+            raise ValueError("Initial charge data error")
 
     # validate final charge here
     def validate_FinalCharge(self, field):
-        f = int(field.data)
-        if (f > 100):
+        if field.data < self.InitialCharge.data:
             raise ValueError("Final charge data error")
 
-        # a = field.data 
-        # b = self.InitialCharge.data
-        # c = str(100)
-        # d = 10
-        # e = self.InitialCharge.object_data
+        if (field.data > 100) | (field.data < 0):
+            raise ValueError("Final charge data error")
 
     # validate start date here
     def validate_StartDate(self, field):
-        # day = field.data.day
-        # month = field.data.day
-        # year = field.data.day
-
-        # print(field.data.day)
-
-        # try:
-        #     datetime.datetime(year, month, day)
-        # except ValueError:
-        #     raise ValueError("Date data error")
         pass
 
     # validate start time here
@@ -67,12 +49,8 @@ class Calculator_Form(FlaskForm):
 
     # validate charger configuration here
     def validate_ChargerConfiguration(self, field):
-        cc = int(field.data)
-        if cc < 1| cc > 8 :
-            raise ValueError("Charger Configuration data error")
+        pass
 
     # validate postcode here
     def validate_PostCode(self, field):
-        pc = int(field.data)
-        if (pc<200) | (pc>299 & pc<800) | (pc>9999):
-            raise ValueError("Post Code data error")
+        pass
