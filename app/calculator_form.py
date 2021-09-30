@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, TimeField
 from wtforms.validators import DataRequired, ValidationError, Optional
+from datetime import datetime
 
 
 # validation for form inputs
@@ -27,22 +28,22 @@ class Calculator_Form(FlaskForm):
     def validate_InitialCharge(self, field):
         # another example of how to compare initial charge with final charge
         # you may modify this part of the code
-        if int(field.data) > self.FinalCharge.data:
-            raise ValueError("Initial charge data error")
-        if (int(field.data) > 100) | (int(field.data) < 0):
+        i = int(field.data)
+        f = int(self.FinalCharge.data)
+        if (i > f) | (i < 0) | (i > 100):
             raise ValueError("Initial charge data error")
 
     # validate final charge here
     def validate_FinalCharge(self, field):
-        if int(field.data) < self.InitialCharge.data:
-            raise ValueError("Final charge data error")
-
-        if (int(field.data) > 100) | (int(field.data) < 0):
+        f = int(field.data)
+        if (f > 100):
             raise ValueError("Final charge data error")
 
     # validate start date here
     def validate_StartDate(self, field):
-        pass
+        date = datetime(field.data.year, field.data.month, field.data.day)
+        if date<datetime(2008, 7, 1):
+            raise ValueError('Date should not be ealier than 01/07/2008')
 
     # validate start time here
     def validate_StartTime(self, field):
@@ -57,4 +58,6 @@ class Calculator_Form(FlaskForm):
 
     # validate postcode here
     def validate_PostCode(self, field):
-        pass
+        pc = int(field.data)
+        if (pc<200) | (pc>299 and pc<800) | (pc>9999):
+            raise ValueError("Post Code data error")
