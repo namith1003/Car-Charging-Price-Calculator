@@ -93,7 +93,7 @@ class Calculator():
     def get_api(postcode, date):
         # location
         l = requests.get('http://118.138.246.158/api/v1/location?postcode=' + postcode)
-        json = l.json()ada
+        json = l.json()
         locationId =  str(json[0]['id'])
 
         # date
