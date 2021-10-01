@@ -50,7 +50,6 @@ def operation_result():
                 if d == dates[0]:
                     is_peak = calculator.is_peak(start_time)
                     
-                    
                 
         # you may change the logic as your like
         duration = calculator.get_duration(start_time)

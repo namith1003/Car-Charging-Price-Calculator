@@ -3,9 +3,10 @@ from workalendar.oceania import Australia
 from flask import Flask, render_template, request
 import requests
 
+
 class Calculator():
     # you can choose to initialise variables here, if needed.
-    def __init__(self):
+    def __init__(self, postcode=None, date=None):
         self.cost = 0
         self.time = 0
         self.si = 0
@@ -38,7 +39,7 @@ class Calculator():
         # self.api = api.json()
 
     # you may add more parameters if needed, you may modify the formula also.
-    def cost_calculation(self, initial_state, final_state, capacity, is_peak, is_holiday):        
+    def cost_calculation(self, initial_state, final_state, capacity, is_peak, is_holiday):
         if is_peak:
             base_price = 100
         else:
@@ -49,14 +50,13 @@ class Calculator():
         else:
             surcharge_factor = 1
 
-        cost = (final_state - initial_state) / 100 * capacity * base_price / 100 * surcharge_factor
+        cost = (int(final_state) - int(initial_state)) / 100 * int(capacity) * base_price / 100 * surcharge_factor
         return cost
 
     # you may add more parameters if needed, you may also modify the formula.
     def time_calculation(self, initial_state, final_state, capacity, power):
-        self.time = (final_state - initial_state) / 100 * capacity / power * 60
+        self.time = (int(final_state) - int(initial_state)) / 100 * int(capacity) / power * 60
         return self.time
-
 
     # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
     def is_holiday(self, start_date):
@@ -69,7 +69,7 @@ class Calculator():
         t = start_time.split(':')
         hour = int(t[0])
 
-        return hour<18 & hour>5
+        return hour < 18 & hour > 5
 
     def peak_period(self, start_time):
         fmt = '%H:%M'
@@ -132,7 +132,7 @@ class Calculator():
     def get_cloud_cover(self):
         z = {}
         for i in range(24):
-            z.update({"hour" + str(i) : str(self.api['hourlyWeatherHistory'][i]['cloudCoverPct'])})
+            z.update({"hour" + str(i): str(self.api['hourlyWeatherHistory'][i]['cloudCoverPct'])})
 
         self.cc = z
         return self.cc
