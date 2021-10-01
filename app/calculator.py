@@ -34,7 +34,7 @@ class Calculator():
         #     except ValueError:
         #         day = 28
         #         d = str(day)
-        
+
         # api = requests.get('http://118.138.246.158/api/v1/weather?location=' + locationId + '&date=' + str(year) + '-' + m + '-' + d)
         # self.api = api.json()
 
@@ -79,10 +79,10 @@ class Calculator():
         pass
 
     def get_endtime(self, start_date, start_time, duration):
-        return datetime.strptime(start_date, + ' ' + start_time, fmt = '%D/%M/%Y %H:%M') + timedelta(hours=duration)
+        return datetime.strptime(start_date, + ' ' + start_time, fmt='%D/%M/%Y %H:%M') + timedelta(hours=duration)
 
     def get_no_of_days(self, start_date, start_time, duration):
-        endCharge = datetime.strptime(start_date, + ' ' + start_time, fmt = '%D/%M/%Y %H:%M') + timedelta(hours=duration)
+        endCharge = datetime.strptime(start_date, + ' ' + start_time, fmt='%D/%M/%Y %H:%M') + timedelta(hours=duration)
         endDate, _ = endCharge.split(' ')
         days = datetime.strptime(endDate, '%Y-%m-%d') - datetime.strptime(start_date, '%d/%m/%Y')
         return days
@@ -91,22 +91,23 @@ class Calculator():
         # location
         l = requests.get('http://118.138.246.158/api/v1/location?postcode=' + postcode)
         json = l.json()
-        locationId =  str(json[0]['id'])
+        locationId = str(json[0]['id'])
 
         # date
         y, m, d = date.split('-')
         day, month, year = int(d), int(m), int(y)
 
         # handles date over 24/09/2021
-        while datetime(year, month, day)>datetime(2021, 9, 24):
+        while datetime(year, month, day) > datetime(2021, 9, 24):
             year -= 1
             try:
                 datetime(year, month, day)
             except ValueError:
                 day = 28
                 d = str(day)
-        
-        api = requests.get('http://118.138.246.158/api/v1/weather?location=' + locationId + '&date=' + str(year) + '-' + m + '-' + d)
+
+        api = requests.get(
+            'http://118.138.246.158/api/v1/weather?location=' + locationId + '&date=' + str(year) + '-' + m + '-' + d)
         return api.json()
 
     # to be acquired through API
@@ -138,4 +139,4 @@ class Calculator():
         return self.cc
 
     def calculate_solar_energy(self, si, dl, cc, hour):
-        return si*hour/dl*(1-cc/100)*50*0.2
+        return si * hour / dl * (1 - cc / 100) * 50 * 0.2
