@@ -6,7 +6,7 @@ import requests
 
 class Calculator():
     # you can choose to initialise variables here, if needed.
-    def __init__(self):
+    def __init__(self, postcode=None, date=None):
         self.cost = 0
         self.time = 0
         self.si = 0
@@ -16,13 +16,16 @@ class Calculator():
 
         # ====== API ======
         # location id
-        postcode = request.form['PostCode']
+        if postcode is None:
+            postcode = request.form['PostCode']
         l = requests.get('http://118.138.246.158/api/v1/location?postcode=' + postcode)
         json = l.json()
         locationId = str(json[0]['id'])
 
         # date
-        date = request.form['StartDate']
+        if date is None:
+            date = request.form['StartDate']
+
         d, m, y = date.split('/')
         day, month, year = int(d), int(m), int(y)
 
