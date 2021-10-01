@@ -5,7 +5,6 @@ from app.calculator import *
 
 from app.calculator_form import *
 import os
-
 SECRET_KEY = os.urandom(32)
 
 ev_calculator_app = Flask(__name__)
@@ -32,25 +31,26 @@ def operation_result():
         start_time = request.form['StartTime']
         charger_configuration = request.form['ChargerConfiguration']
 
+
         power = [2, 3.6, 7.2, 11, 22, 36, 90, 350]
         base_price = [5, 7.5, 10, 12.5, 15, 15, 20, 30, 50]
 
-        time = calculator.time_calculation(initial_charge, final_charge, battery_capacity,
-                                           power[int(charger_configuration) + 1])
+        time = calculator.time_calculation(initial_charge, final_charge, battery_capacity, power[int(charger_configuration)+1])
         days = calculator.get_no_of_days(start_date, start_time, time)
         end_time = calculator.get_endtime(start_date, start_time, time)
 
         dates = []
         for i in range(days):
-            d, m, y = start_date.split('/')
-            dates += [str(int(d) + i).zfill(2) + '/' + m + '/' + y]
+            d,m,y = start_date.split('/')
+            dates += [str(int(d)+i).zfill(2) + '/' + m + '/' + y]
 
         for d in dates:
             is_holiday = calculator.is_holiday(d)
             if d == dates[0] | d == dates[-1]:
                 if d == dates[0]:
                     is_peak = calculator.is_peak(start_time)
-
+                    
+                
         # you may change the logic as your like
         duration = calculator.get_duration(start_time)
 
@@ -61,16 +61,16 @@ def operation_result():
 
         is_holiday = calculator.is_holiday(start_date)
 
-        cost = calculator.cost_calculation(initial_charge, final_charge, battery_capacity, is_peak, is_holiday)
+        # cost = calculator.cost_calculation(initial_charge, final_charge, battery_capacity, is_peak, is_holiday)
 
-        time = calculator.time_calculation(initial_charge, final_charge, battery_capacity, power)
+        # time = calculator.time_calculation(initial_charge, final_charge, battery_capacity, power)
 
         # you may change the return statement also
-
+        
         # values of variables can be sent to the template for rendering the webpage that users will see
-        return render_template('calculator.html', cost=cost, time=time, calculation_success=True, form=calculator_form)
-
-        fmt = '%HH:%MM'
+        # return render_template('calculator.html', cost = cost, time = time, calculation_success = True, form = calculator_form)
+        # return render_template('calculator.html', calculation_success=True, form=calculator_form)
+        fmt = '%H:%M'
         return str(datetime.strptime('18:00', fmt) - datetime.strptime(start_time, fmt))
 
     else:
@@ -78,8 +78,7 @@ def operation_result():
         # flash(battery_capacity)
         # flash("something went wrong")
         flash_errors(calculator_form)
-        return render_template('calculator.html', calculation_success=False, form=calculator_form)
-
+        return render_template('calculator.html', calculation_success = False, form = calculator_form)
 
 # method to display all errors
 def flash_errors(form):
