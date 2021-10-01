@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from workalendar.oceania import Australia
 from flask import Flask, render_template, request
 import requests
@@ -13,29 +13,29 @@ class Calculator():
         self.dl = 0
         self.cc = 0
 
-        # ====== API ======
-        # location id
-        postcode = request.form['PostCode']
-        l = requests.get('http://118.138.246.158/api/v1/location?postcode=' + postcode)
-        json = l.json()
-        locationId =  str(json[0]['id'])
+        # # ====== API ======
+        # # location id
+        # postcode = request.form['PostCode']
+        # l = requests.get('http://118.138.246.158/api/v1/location?postcode=' + postcode)
+        # json = l.json()
+        # locationId =  str(json[0]['id'])
 
-        # date
-        date = request.form['StartDate']
-        d, m, y = date.split('/')
-        day, month, year = int(d), int(m), int(y)
+        # # date
+        # date = request.form['StartDate']
+        # d, m, y = date.split('/')
+        # day, month, year = int(d), int(m), int(y)
 
-        # handles date over 24/09/2021
-        while datetime(year, month, day)>datetime(2021, 9, 24):
-            year -= 1
-            try:
-                datetime(year, month, day)
-            except ValueError:
-                day = 28
-                d = str(day)
+        # # handles date over 24/09/2021
+        # while datetime(year, month, day)>datetime(2021, 9, 24):
+        #     year -= 1
+        #     try:
+        #         datetime(year, month, day)
+        #     except ValueError:
+        #         day = 28
+        #         d = str(day)
         
-        api = requests.get('http://118.138.246.158/api/v1/weather?location=' + locationId + '&date=' + str(year) + '-' + m + '-' + d)
-        self.api = api.json()
+        # api = requests.get('http://118.138.246.158/api/v1/weather?location=' + locationId + '&date=' + str(year) + '-' + m + '-' + d)
+        # self.api = api.json()
 
     # you may add more parameters if needed, you may modify the formula also.
     def cost_calculation(self, initial_state, final_state, capacity, is_peak, is_holiday):        
@@ -72,10 +72,42 @@ class Calculator():
         return hour<18 & hour>5
 
     def peak_period(self, start_time):
-        pass 
+        fmt = '%H:%M'
+        return datetime.strptime('18:00', fmt) - datetime.strptime(start_time, fmt)
 
     def get_duration(self, start_time):
         pass
+
+    def get_endtime(self, start_date, start_time, duration):
+        return datetime.strptime(start_date, + ' ' + start_time, fmt = '%D/%M/%Y %H:%M') + timedelta(hours=duration)
+
+    def get_no_of_days(self, start_date, start_time, duration):
+        endCharge = datetime.strptime(start_date, + ' ' + start_time, fmt = '%D/%M/%Y %H:%M') + timedelta(hours=duration)
+        endDate, _ = endCharge.split(' ')
+        days = datetime.strptime(endDate, '%Y-%m-%d') - datetime.strptime(start_date, '%d/%m/%Y')
+        return days
+
+    def get_api(postcode, date):
+        # location
+        l = requests.get('http://118.138.246.158/api/v1/location?postcode=' + postcode)
+        json = l.json()
+        locationId =  str(json[0]['id'])
+
+        # date
+        d, m, y = date.split('/')
+        day, month, year = int(d), int(m), int(y)
+
+        # handles date over 24/09/2021
+        while datetime(year, month, day)>datetime(2021, 9, 24):
+            year -= 1
+            try:
+                datetime(year, month, day)
+            except ValueError:
+                day = 28
+                d = str(day)
+        
+        api = requests.get('http://118.138.246.158/api/v1/weather?location=' + locationId + '&date=' + str(year) + '-' + m + '-' + d)
+        return api.json()
 
     # to be acquired through API
     def get_sun_hour(self, sun_hour):
@@ -105,5 +137,5 @@ class Calculator():
         self.cc = z
         return self.cc
 
-    def calculate_solar_energy(self):
-        pass
+    def calculate_solar_energy(self, si, dl, cc, hour):
+        return si*hour/dl*(1-cc/100)*50*0.2

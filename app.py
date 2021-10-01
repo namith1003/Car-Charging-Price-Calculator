@@ -31,12 +31,31 @@ def operation_result():
         start_time = request.form['StartTime']
         charger_configuration = request.form['ChargerConfiguration']
 
-        
 
+        power = [2, 3.6, 7.2, 11, 22, 36, 90, 350]
+        base_price = [5, 7.5, 10, 12.5, 15, 15, 20, 30, 50]
+
+        time = calculator.time_calculation(initial_charge, final_charge, battery_capacity, power[int(charger_configuration)+1])
+        days = calculator.get_no_of_days(start_date, start_time, time)
+        end_time = calculator.get_endtime(start_date, start_time, time)
+
+        dates = []
+        for i in range(days):
+            d,m,y = start_date.split('/')
+            dates += [str(int(d)+i).zfill(2) + '/' + m + '/' + y]
+
+        for d in dates:
+            is_holiday = calculator.is_holiday(d)
+            if d == dates[0] | d == dates[-1]:
+                if d == dates[0]:
+                    is_peak = calculator.is_peak(start_time)
+                    
+                    
+                
         # you may change the logic as your like
         duration = calculator.get_duration(start_time)
 
-        is_peak = calculator.is_peak()
+        is_peak = calculator.is_peak(start_time)
 
         if is_peak:
             peak_period = calculator.peak_period(start_date)
@@ -51,7 +70,9 @@ def operation_result():
         
         # values of variables can be sent to the template for rendering the webpage that users will see
         # return render_template('calculator.html', cost = cost, time = time, calculation_success = True, form = calculator_form)
-        return render_template('calculator.html', calculation_success=True, form=calculator_form)
+        # return render_template('calculator.html', calculation_success=True, form=calculator_form)
+        fmt = '%H:%M'
+        return str(datetime.strptime('18:00', fmt) - datetime.strptime(start_time, fmt))
 
     else:
         # battery_capacity = request.form['BatteryPackCapacity']
