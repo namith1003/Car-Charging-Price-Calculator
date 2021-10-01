@@ -20,12 +20,12 @@ class Calculator():
             postcode = request.form['PostCode']
         l = requests.get('http://118.138.246.158/api/v1/location?postcode=' + postcode)
         json = l.json()
+        print(json)
         locationId = str(json[0]['id'])
 
         # date
         if date is None:
             date = request.form['StartDate']
-
         d, m, y = date.split('/')
         day, month, year = int(d), int(m), int(y)
 
@@ -54,12 +54,12 @@ class Calculator():
         else:
             surcharge_factor = 1
 
-        cost = (final_state - initial_state) / 100 * capacity * base_price / 100 * surcharge_factor
+        cost = (int(final_state) - int(initial_state)) / 100 * int(capacity) * base_price / 100 * surcharge_factor
         return cost
 
     # you may add more parameters if needed, you may also modify the formula.
     def time_calculation(self, initial_state, final_state, capacity, power):
-        self.time = (final_state - initial_state) / 100 * capacity / power * 60
+        self.time = (int(final_state) - int(initial_state)) / 100 * int(capacity) / power * 60
         return self.time
 
     # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
@@ -111,3 +111,7 @@ class Calculator():
 
     def calculate_solar_energy(self):
         pass
+
+
+if __name__ == '__main__':
+    calculator = Calculator("3444", "10/10/2020")
