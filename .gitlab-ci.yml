@@ -15,6 +15,11 @@ test:
     image: python:3.8-alpine
     script:
         - echo "Testing"
-        - pip3 install --upgrade pip
         - pip3 install -r requirements.txt
+        - coverage run --source+app --branch -m unittest test/pyunittest.py
+        - coverage report -m
+        - coverage html -d coverage_reports
         - python3 -m unittest test/pyunittest.py
+    artefacts:
+        paths:
+        - coverage_reports/
