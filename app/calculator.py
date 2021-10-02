@@ -35,7 +35,7 @@ class Calculator():
         return aus.is_working_day(date(d.year, d.month, d.day)) == False
 
     def is_peak(self, t):
-        return t < time(18) and t > time(6)
+        return t < time(18) and t >= time(6)
 
     def peak_period(self, start_time):
         fmt = '%H:%M'
