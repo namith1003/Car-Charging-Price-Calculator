@@ -1,5 +1,6 @@
 from app.calculator import *
 import unittest
+# from unittest.mock import Mock
 
 
 class TestCalculator(unittest.TestCase):
@@ -14,12 +15,13 @@ class TestCalculator(unittest.TestCase):
 
     def test_correct_input_cost_peak_no_holiday(self):
         self.calculator = Calculator("3333", "10/10/2020")
-        self.assertEqual(45, self.calculator.cost_calculation(10, 100, 50, True, False))
+        self.assertEqual(5, self.calculator.cost_calculation(10, 50, True, False))
+
 
     # you may create test suite if needed
     def test_correct_input_cost_no_peak_holiday(self):
         self.calculator = Calculator("3333", "10/10/2020")
-        self.assertAlmostEqual(24.75, self.calculator.cost_calculation(10, 100, 50, False, True))
+        self.assertAlmostEqual(2.75, self.calculator.cost_calculation(10, 50, False, True))
 
 
 def main():

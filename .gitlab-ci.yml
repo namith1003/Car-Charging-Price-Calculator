@@ -15,4 +15,4 @@ test:
     script:
         - echo "Testing"
         - pip3 install --upgrade pip
-        - python3 -m unittest test.pyunittest
+        - python3 -m unittest test/pyunittest.py
