@@ -40,6 +40,7 @@ class TestCalculator(unittest.TestCase):
         self.assertRaises(TypeError, self.calculator.cost_calculation, "", "", "", "", "")
         # self.assertEqual(self.calculator.cost_calculation("", "", "", "", ""), "")
 
+    # Testing method used MC/DC
     # testing for invalid string inputs to cost_calculation function
     def test_string_input_cost_calculation(self):
         with self.assertRaises(TypeError):
@@ -61,6 +62,7 @@ class TestCalculator(unittest.TestCase):
     def test_correct_input_cost_peak_holiday(self):
         self.assertAlmostEqual(0.55, self.calculator.cost_calculation(10, 5, True, True))
 
+    # Testing method used line coverage
     # testing the time_calculation method using initial_charge of 0, final_charge of 72
     # capacity of 100kwh and power of 7.2 kw assuming charging configuration of 3
     def test_correct_time_calculation(self):
@@ -77,6 +79,7 @@ class TestCalculator(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.calculator.time_calculation(0, 72, 100, "hi")
 
+    # testing method used line coverage
     # test is_holiday method with the date 25/12/2020 which is a valid holiday christmas
     def test_is_date_holiday(self):
         self.assertTrue(self.calculator.is_holiday(datetime(2020, 12, 25)))
@@ -85,6 +88,7 @@ class TestCalculator(unittest.TestCase):
     def test_is_date_not_holiday(self):
         self.assertTrue(self.calculator.is_holiday(datetime(2020, 12, 20)))
 
+    # test is_holiday method for invalid string inputs
     def test_is_invalid_date_holiday(self):
         with self.assertRaises(TypeError):
             self.calculator.is_holiday(datetime("year", 12, 20))
@@ -108,6 +112,16 @@ class TestCalculator(unittest.TestCase):
         # testing for a normal value in off-peak time
         self.assertFalse(self.calculator.is_peak(time(3, 0, 0)))
 
+    # test if invalid string inputs provide necessary errors
+    def test_is_invalid_time_peak(self):
+        with self.assertRaises(TypeError):
+            self.calculator.is_peak(time("hi", 59, 59))
+        with self.assertRaises(TypeError):
+            self.calculator.is_peak(time(5, "hi", 59))
+        with self.assertRaises(TypeError):
+            self.calculator.is_peak(time(5, 59, "hi"))
+
+    # tested using statement coverage
     # test get_endtime to check for valid ending times
     def test_get_endtime(self):
         # test for a few hours in the same day from start of the day
@@ -119,6 +133,15 @@ class TestCalculator(unittest.TestCase):
         self.assertEqual(datetime(2020, 1, 2, 14, 48), self.calculator.get_endtime("1/1/2020", "0:0", 38.8))
         # test from one day to exactly the next day
         self.assertEqual(datetime(2020, 1, 2, 0, 0), self.calculator.get_endtime("1/1/2020", "0:0", 24))
+
+    # test get_endtime with invalid string inputs
+    def test_get_invalid_endtime(self):
+        with self.assertRaises(ValueError):
+            self.calculator.get_endtime("hello", "0:0", 5)
+        with self.assertRaises(ValueError):
+            self.calculator.get_endtime("1/1/2020", "hi", 5)
+        with self.assertRaises(TypeError):
+            self.calculator.get_endtime("1/1/2020", "0:0", "hi")
 
     # Tests Below All Run Using The Mock Calculator and Mock Api
 
@@ -146,6 +169,7 @@ class TestCalculator(unittest.TestCase):
         self.assertEqual(29,
                          self.calculator.get_cloud_cover(api, 0))
 
+    # Tests are done using MC/DC coverage
     # tests if the solar energy generated is valid
     def test_calculate_solar_energy(self):
         # test with the mock calculator and mock apis results
@@ -178,8 +202,19 @@ class TestCalculator(unittest.TestCase):
         self.assertAlmostEqual(0,
                                self.calculator.calculate_solar_energy(6.5, 12.8, 22, 0))
 
-        #  these variables represent the conditions:
-        #  rm, cfv, pep, pdc, n = 'request.method == "POST"', 'calculator_form.validate()', 'point < end_point', 'point.date() != current', ' net < 0'
+    # test for invalid string inputs to the calculate_solar_energy function
+    def test_calculate_invalid_solar_energy(self):
+        with self.assertRaises(TypeError):
+            self.calculator.calculate_solar_energy("hi", 12.8, 22, 0)
+        with self.assertRaises(TypeError):
+            self.calculator.calculate_solar_energy(6.5, "hi", 22, 0)
+        with self.assertRaises(TypeError):
+            self.calculator.calculate_solar_energy(6.5, 12.8, "hi", 0)
+        with self.assertRaises(TypeError):
+            self.calculator.calculate_solar_energy(6.5, 12.8, 22, "hi")
+
+    #  these variables represent the conditions:
+    #  rm, cfv, pep, pdc, n = 'request.method == "POST"', 'calculator_form.validate()', 'point < end_point', 'point.date() != current', ' net < 0'
 
     def operator_result_mock(self, rm, cfv, pep, pdc, n):
 
@@ -197,10 +232,11 @@ class TestCalculator(unittest.TestCase):
             power = [2, 3.6, 7.2, 11, 22, 36, 90, 350]
             base_price = [5, 7.5, 10, 12.5, 15, 20, 30, 50]
 
-            time = self.calculator.time_calculation(initial_charge, final_charge, battery_capacity, power[int(charger_configuration)-1])
+            time = self.calculator.time_calculation(initial_charge, final_charge, battery_capacity,
+                                                    power[int(charger_configuration) - 1])
             start_point = datetime.strptime(start_date + ' ' + start_time, '%d/%m/%Y %H:%M')
-            end_point = self.calculator.get_endtime(start_date, start_time, time)                    
-                    
+            end_point = self.calculator.get_endtime(start_date, start_time, time)
+
             # you may change the logic as your like
             costs = 0
 
@@ -216,24 +252,26 @@ class TestCalculator(unittest.TestCase):
                     is_holiday = self.calculator.is_holiday(point.date())
                     api = self.test_calculator.get_api(postcode, str(point.date()))
                 is_peak = self.calculator.is_peak(point.time())
-                si , dl, cc, = self.calculator.get_solar_insolation(api), self.calculator.get_day_light_length(api), self.calculator.get_cloud_cover(api, 0)
+                si, dl, cc, = self.calculator.get_solar_insolation(api), self.calculator.get_day_light_length(
+                    api), self.calculator.get_cloud_cover(api, 0)
 
-                solar = self.calculator.calculate_solar_energy(si, dl, cc, 1/60)
-                charger = power[int(charger_configuration)-1]/60
+                solar = self.calculator.calculate_solar_energy(si, dl, cc, 1 / 60)
+                charger = power[int(charger_configuration) - 1] / 60
                 net = charger - solar
                 if n:
                     net = 0
 
-                costs += self.calculator.cost_calculation(net, base_price[int(charger_configuration)-1], is_peak, is_holiday)
+                costs += self.calculator.cost_calculation(net, base_price[int(charger_configuration) - 1], is_peak,
+                                                          is_holiday)
                 # increments by 1 minute
                 point += timedelta(minutes=1)
             # sets new end_point based on the year
             # end_point = end_point.replace(year = end_point.year - 1)
 
-        # get average costs of the 3 years
-        # cost = costs/3
+            # get average costs of the 3 years
+            # cost = costs/3
             return costs
- 
+
     # tests when all condition branches are True
     def test_all_True(self):
         self.assertAlmostEqual(0, self.operator_result_mock(True, True, True, True, True))
@@ -249,7 +287,7 @@ class TestCalculator(unittest.TestCase):
     # tests when all condition branches are True, except for 'point.date() != current'
     def test_pdc_False(self):
         self.assertAlmostEqual(0, self.operator_result_mock(True, True, True, False, True))
-    
+
     # tests when all condition branches are True, except for 'net < 0'
     def test_n_False(self):
         self.assertAlmostEqual(3.17532618118, self.operator_result_mock(True, True, True, True, False))
