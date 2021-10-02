@@ -4,6 +4,8 @@ stages:
 
 build:
     stage: build
+    tags:
+        - fit2107-runner
     image: python:3.8-alpine
     script: 
         - echo "Building"
@@ -12,11 +14,14 @@ build:
 
 test:
     stage: test
+    tags:
+        - fit2107-runner
     image: python:3.8-alpine
     script:
         - echo "Testing"
         - pip3 install -r requirements.txt
-        - coverage run --source=app --branch -m unittest test/pyunittest.py
+        - pip3 install coverage
+        - coverage run -m unittest test/pyunittest.py
         - coverage report -m
         - coverage html -d coverage_reports
     artifacts:
