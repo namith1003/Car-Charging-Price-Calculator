@@ -8,6 +8,7 @@ build:
     script: 
         - echo "Building"
         - pip3 install --upgrade pip
+        - pip3 install -r requirements.txt
 
 test:
     stage: test
@@ -15,4 +16,5 @@ test:
     script:
         - echo "Testing"
         - pip3 install --upgrade pip
+        - pip3 install -r requirements.txt
         - python3 -m unittest test/pyunittest.py
