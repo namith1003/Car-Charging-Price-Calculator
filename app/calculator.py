@@ -39,8 +39,7 @@ class Calculator():
         return time(18) > t >= time(6)
 
     def peak_period(self, start_time):
-        fmt = '%H:%M'
-        return datetime.strptime('18:00', fmt) - datetime.strptime(start_time, fmt)
+        pass
 
     def get_duration(self, start_time):
         pass
@@ -93,4 +92,7 @@ class Calculator():
         return api['hourlyWeatherHistory'][hour]['cloudCoverPct']
 
     def calculate_solar_energy(self, si, dl, cc, hour):
-        return si * hour / dl * (1 - cc / 100) * 50 * 0.2
+        if dl == 0:
+            return 0
+        else:
+            return si * hour / dl * (1 - cc / 100) * 50 * 0.2
