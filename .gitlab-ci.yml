@@ -20,6 +20,6 @@ test:
         - coverage report -m
         - coverage html -d coverage_reports
         - python3 -m unittest test/pyunittest.py
-    artefacts:
+    artifacts:
         paths:
         - coverage_reports/
