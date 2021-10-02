@@ -1,6 +1,5 @@
 from datetime import date, datetime, timedelta, time
 from workalendar.oceania import Australia
-from flask import Flask, render_template, request
 import requests
 
 
