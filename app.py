@@ -30,47 +30,48 @@ def operation_result():
         start_date = request.form['StartDate']
         start_time = request.form['StartTime']
         charger_configuration = request.form['ChargerConfiguration']
-        postcode = request.form['PostCode']
 
 
         power = [2, 3.6, 7.2, 11, 22, 36, 90, 350]
-        base_price = [5, 7.5, 10, 12.5, 15, 20, 30, 50]
+        base_price = [5, 7.5, 10, 12.5, 15, 15, 20, 30, 50]
 
-        time = calculator.time_calculation(initial_charge, final_charge, battery_capacity, power[int(charger_configuration)-1])
-        start_point = datetime.strptime(start_date + ' ' + start_time, '%d/%m/%Y %H:%M')
-        end_point = calculator.get_endtime(start_date, start_time, time)                    
+        time = calculator.time_calculation(initial_charge, final_charge, battery_capacity, power[int(charger_configuration)+1])
+        days = calculator.get_no_of_days(start_date, start_time, time)
+        end_time = calculator.get_endtime(start_date, start_time, time)
+
+        dates = []
+        for i in range(days):
+            d,m,y = start_date.split('/')
+            dates += [str(int(d)+i).zfill(2) + '/' + m + '/' + y]
+
+        for d in dates:
+            is_holiday = calculator.is_holiday(d)
+            if d == dates[0] | d == dates[-1]:
+                if d == dates[0]:
+                    is_peak = calculator.is_peak(start_time)
+                    
                 
         # you may change the logic as your like
-        costs = 0
+        duration = calculator.get_duration(start_time)
 
-        for point in [start_point, start_point.replace(year=start_point.year-1), start_point.replace(year=start_point.year-2)]:
-            current = point.date()
-            api = calculator.get_api(postcode, str(point.date()))
-            is_holiday = calculator.is_holiday(point.date())
-            while point < end_point:
-                if point.date() != current:
-                    is_holiday = calculator.is_holiday(point.date())
-                    api = calculator.get_api(postcode, str(point.date()))
-                is_peak = calculator.is_peak(point.time())
-                si , dl, cc, = calculator.get_solar_insolation(api), calculator.get_day_light_length(api), calculator.get_cloud_cover(api, point.hour)
+        is_peak = calculator.is_peak(start_time)
 
-                solar = calculator.calculate_solar_energy(si, dl, cc, 1/60)
-                charger = power[int(charger_configuration)-1]/60
-                net = charger - solar
-                if net < 0:
-                    net = 0
+        if is_peak:
+            peak_period = calculator.peak_period(start_date)
 
-                costs += calculator.cost_calculation(net, base_price[int(charger_configuration)-1], is_peak, is_holiday)
-                point += timedelta(minutes=1)
-            end_point = end_point.replace(year = end_point.year - 1)
+        is_holiday = calculator.is_holiday(start_date)
 
-        cost = costs/3
+        # cost = calculator.cost_calculation(initial_charge, final_charge, battery_capacity, is_peak, is_holiday)
+
+        # time = calculator.time_calculation(initial_charge, final_charge, battery_capacity, power)
 
         # you may change the return statement also
         
         # values of variables can be sent to the template for rendering the webpage that users will see
-        return render_template('calculator.html', cost = '$' + "{:.2f}".format(cost), time = "{:.2f}".format(time*60) + ' minutes', calculation_success = True, form = calculator_form)
+        # return render_template('calculator.html', cost = cost, time = time, calculation_success = True, form = calculator_form)
         # return render_template('calculator.html', calculation_success=True, form=calculator_form)
+        fmt = '%H:%M'
+        return str(datetime.strptime('18:00', fmt) - datetime.strptime(start_time, fmt))
 
     else:
         # battery_capacity = request.form['BatteryPackCapacity']
