@@ -45,10 +45,6 @@ class Calculator_Form(FlaskForm):
         if date<datetime(2008, 7, 1):
             raise ValueError('Date should not be ealier than 01/07/2008')
 
-    # validate start time here
-    def validate_StartTime(self, field):
-        pass
-
     # validate charger configuration here
     def validate_ChargerConfiguration(self, field):
         configurations = [1, 2, 3, 4, 5, 6, 7, 8]
