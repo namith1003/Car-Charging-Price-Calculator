@@ -214,7 +214,7 @@ class TestCalculator(unittest.TestCase):
 
     # tests when all condition branches are True, except for 'request.method == "POST" and calculator_form.validate()'
     def test_rm_and_cfv_False(self):
-        self.assertAlmostEqual(3.17532618118, self.operator_result_mock(True, False, True, True, True))
+        self.assertAlmostEqual(None, self.operator_result_mock(True, False, True, True, True))
 
     # tests when all condition branches are True, except for 'point < end_point'
     def test_pep_False(self):
