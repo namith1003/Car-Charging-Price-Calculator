@@ -207,7 +207,7 @@ class TestCalculator(unittest.TestCase):
         # get average costs of the 3 years
         # cost = costs/3
             return costs
-
+ 
     # tests when all condition branches are True
     def test_all_True(self):
         self.assertAlmostEqual(0, self.operator_result_mock(True, True, True, True, True))
