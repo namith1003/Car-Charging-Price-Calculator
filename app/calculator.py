@@ -96,3 +96,7 @@ class Calculator():
             return 0
         else:
             return si * hour / dl * (1 - cc / 100) * 50 * 0.2
+
+if __name__ == "__main__":
+    calculator = Calculator()
+    print(calculator.get_api("3444", "2020-10-10"))
