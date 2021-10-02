@@ -1,3 +1,4 @@
+from main import *
 from app.calculator import *
 import unittest
 
@@ -150,6 +151,58 @@ class TestCalculator(unittest.TestCase):
         # tests if no energy is generated when hours charged is zero
         self.assertAlmostEqual(0,
                                self.calculator.calculate_solar_energy(6.5, 12.8, 22, 0))
+
+    def test_operator_result_mock(self) -> None:
+
+        # extract information from the form
+        battery_capacity = 82
+        initial_charge = 2
+        final_charge = 50
+        start_date = '10/10/2020'
+        start_time = '09:10'
+        charger_configuration = 8
+        postcode = 3444
+
+        # list of values based of charger_configuration
+        power = [2, 3.6, 7.2, 11, 22, 36, 90, 350]
+        base_price = [5, 7.5, 10, 12.5, 15, 20, 30, 50]
+
+        time = self.calculator.time_calculation(initial_charge, final_charge, battery_capacity, power[int(charger_configuration)-1])
+        start_point = datetime.strptime(start_date + ' ' + start_time, '%d/%m/%Y %H:%M')
+        end_point = self.calculator.get_endtime(start_date, start_time, time)                    
+                
+        # you may change the logic as your like
+        costs = 0
+
+        # loops for the 3 different years
+        for point in [start_point, start_point.replace(year=start_point.year-1), start_point.replace(year=start_point.year-2)]:
+            current = point.date()
+            api = self.test_calculator.get_api(postcode, str(point.date()))
+            is_holiday = self.calculator.is_holiday(point.date())
+            while point < end_point:
+                # if date changes, update api and is_holiday
+                if point.date() != current:
+                    is_holiday = self.calculator.is_holiday(point.date())
+                    api = self.test_calculator.get_api(postcode, str(point.date()))
+                is_peak = self.calculator.is_peak(point.time())
+                si , dl, cc, = self.calculator.get_solar_insolation(api), self.calculator.get_day_light_length(api), self.calculator.get_cloud_cover(api, 0)
+
+                solar = self.calculator.calculate_solar_energy(si, dl, cc, 1/60)
+                charger = power[int(charger_configuration)-1]/60
+                net = charger - solar
+                if net < 0:
+                    net = 0
+
+                costs += self.calculator.cost_calculation(net, base_price[int(charger_configuration)-1], is_peak, is_holiday)
+                # increments by 1 minute
+                point += timedelta(minutes=1)
+            # sets new end_point based on the year
+            end_point = end_point.replace(year = end_point.year - 1)
+
+        # get average costs of the 3 years
+        cost = costs/3
+
+        self.assertAlmostEqual(20.88017519, cost)
 
 
 def main():

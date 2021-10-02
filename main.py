@@ -32,6 +32,7 @@ def operation_result():
         charger_configuration = request.form['ChargerConfiguration']
         postcode = request.form['PostCode']
 
+        # list of values based of charger_configuration
         power = [2, 3.6, 7.2, 11, 22, 36, 90, 350]
         base_price = [5, 7.5, 10, 12.5, 15, 20, 30, 50]
 
@@ -42,11 +43,13 @@ def operation_result():
         # you may change the logic as your like
         costs = 0
 
+        # loops for the 3 different years
         for point in [start_point, start_point.replace(year=start_point.year-1), start_point.replace(year=start_point.year-2)]:
             current = point.date()
             api = calculator.get_api(postcode, str(point.date()))
             is_holiday = calculator.is_holiday(point.date())
             while point < end_point:
+                # if date changes, update api and is_holiday
                 if point.date() != current:
                     is_holiday = calculator.is_holiday(point.date())
                     api = calculator.get_api(postcode, str(point.date()))
@@ -60,9 +63,12 @@ def operation_result():
                     net = 0
 
                 costs += calculator.cost_calculation(net, base_price[int(charger_configuration)-1], is_peak, is_holiday)
+                # increments by 1 minute
                 point += timedelta(minutes=1)
+            # sets new end_point based on the year
             end_point = end_point.replace(year = end_point.year - 1)
 
+        # get average costs of the 3 years
         cost = costs/3
 
         # you may change the return statement also
