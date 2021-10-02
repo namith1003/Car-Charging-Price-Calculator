@@ -4,11 +4,7 @@ from flask import Flask, render_template, request
 import requests
 
 
-class Calculator():
-    # you can choose to initialise variables here, if needed.
-    def __init__(self, postcode=None, date=None):
-        pass
-    
+class Calculator:
     # you may add more parameters if needed, you may modify the formula also.
     def cost_calculation(self, net, base_price, is_peak, is_holiday):
         if is_peak:
@@ -29,7 +25,7 @@ class Calculator():
     def time_calculation(self, initial_state, final_state, capacity, power):
         return (int(final_state) - int(initial_state)) / 100 * int(capacity) / power
 
-        # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
+    # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
 
     def is_holiday(self, d):
         aus = Australia()
@@ -37,7 +33,6 @@ class Calculator():
 
     def is_peak(self, t):
         return time(18) > t >= time(6)
-
 
     def get_endtime(self, start_date, start_time, duration):
         return datetime.strptime(start_date + ' ' + start_time, '%d/%m/%Y %H:%M') + timedelta(hours=duration)
@@ -60,10 +55,10 @@ class Calculator():
             except ValueError:
                 day = 28
                 d = str(day)
-        
-        api = requests.get('http://118.138.246.158/api/v1/weather?location=' + locationId + '&date=' + str(year) + '-' + m + '-' + d)
-        return api.json()
 
+        api = requests.get(
+            'http://118.138.246.158/api/v1/weather?location=' + locationId + '&date=' + str(year) + '-' + m + '-' + d)
+        return api.json()
 
     # to be acquired through API
     def get_day_light_length(self, api):
@@ -84,7 +79,3 @@ class Calculator():
             return 0
         else:
             return si * hour / dl * (1 - cc / 100) * 50 * 0.2
-
-if __name__ == "__main__":
-    calculator = Calculator()
-    print(calculator.get_api("3444", "2020-10-10"))
