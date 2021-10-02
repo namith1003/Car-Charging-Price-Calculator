@@ -20,22 +20,23 @@ class Calculator():
             surcharge = 1.1
         else:
             surcharge = 1
-        
-        cost = base_price/100*net*surcharge*discount
+
+        cost = base_price / 100 * net * surcharge * discount
 
         return cost
 
     # you may add more parameters if needed, you may also modify the formula.
     def time_calculation(self, initial_state, final_state, capacity, power):
-        return (int(final_state) - int(initial_state)) / 100 * int(capacity) / power 
+        return (int(final_state) - int(initial_state)) / 100 * int(capacity) / power
 
-    # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
+        # you may create some new methods at your convenience, or modify these methods, or choose not to use them.
+
     def is_holiday(self, d):
         aus = Australia()
         return aus.is_working_day(date(d.year, d.month, d.day)) == False
 
     def is_peak(self, t):
-        return t < time(18) and t >= time(6)
+        return time(18) > t >= time(6)
 
     def peak_period(self, start_time):
         fmt = '%H:%M'
@@ -51,14 +52,14 @@ class Calculator():
         # location
         l = requests.get('http://118.138.246.158/api/v1/location?postcode=' + postcode)
         json = l.json()
-        locationId =  str(json[0]['id'])
+        locationId = str(json[0]['id'])
 
         # date
         y, m, d = date.split('-')
         day, month, year = int(d), int(m), int(y)
 
         # handles date over 24/09/2021
-        while datetime(year, month, day)>datetime(2021, 9, 24):
+        while datetime(year, month, day) > datetime(2021, 9, 24):
             year -= 1
             try:
                 datetime(year, month, day)
@@ -81,7 +82,7 @@ class Calculator():
     def get_day_light_length(self, api):
         fmt = '%H:%M:%S'
         length = datetime.strptime(api['sunset'], fmt) - datetime.strptime(api['sunrise'], fmt)
-        return length.total_seconds()/60/60
+        return length.total_seconds() / 60 / 60
 
     # to be acquired through API
     def get_solar_insolation(self, api):
@@ -92,4 +93,4 @@ class Calculator():
         return api['hourlyWeatherHistory'][hour]['cloudCoverPct']
 
     def calculate_solar_energy(self, si, dl, cc, hour):
-        return si*hour/dl*(1-cc/100)*50*0.2
+        return si * hour / dl * (1 - cc / 100) * 50 * 0.2

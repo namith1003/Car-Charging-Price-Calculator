@@ -32,7 +32,6 @@ def operation_result():
         charger_configuration = request.form['ChargerConfiguration']
         postcode = request.form['PostCode']
 
-
         power = [2, 3.6, 7.2, 11, 22, 36, 90, 350]
         base_price = [5, 7.5, 10, 12.5, 15, 20, 30, 50]
 
