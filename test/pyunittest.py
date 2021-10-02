@@ -40,6 +40,13 @@ class TestCalculator(unittest.TestCase):
         self.assertRaises(TypeError, self.calculator.cost_calculation, "", "", "", "", "")
         # self.assertEqual(self.calculator.cost_calculation("", "", "", "", ""), "")
 
+    # testing for invalid string inputs to cost_calculation function
+    def test_string_input_cost_calculation(self):
+        with self.assertRaises(TypeError):
+            self.calculator.cost_calculation("hello", 5, True, False)
+        with self.assertRaises(TypeError):
+            self.calculator.cost_calculation(10, "hello", True, False)
+
     # testing cost_calculation for all branches with constant net value of 10 and base_price of 5
     def test_correct_input_cost_peak_no_holiday(self):
         self.assertEqual(0.5, self.calculator.cost_calculation(10, 5, True, False))
@@ -59,6 +66,17 @@ class TestCalculator(unittest.TestCase):
     def test_correct_time_calculation(self):
         self.assertEqual(10, self.calculator.time_calculation(0, 72, 100, 7.2))
 
+    # testing for invalid string inputs to the time calculation
+    def test_invalid_time_calculation(self):
+        with self.assertRaises(ValueError):
+            self.calculator.time_calculation("hi", 72, 100, 7.2)
+        with self.assertRaises(ValueError):
+            self.calculator.time_calculation(0, "hi", 100, 7.2)
+        with self.assertRaises(ValueError):
+            self.calculator.time_calculation(0, 72, "hi", 7.2)
+        with self.assertRaises(TypeError):
+            self.calculator.time_calculation(0, 72, 100, "hi")
+
     # test is_holiday method with the date 25/12/2020 which is a valid holiday christmas
     def test_is_date_holiday(self):
         self.assertTrue(self.calculator.is_holiday(datetime(2020, 12, 25)))
@@ -66,6 +84,14 @@ class TestCalculator(unittest.TestCase):
     # test is_holiday method with the date 20/12/2020 which is not a holiday
     def test_is_date_not_holiday(self):
         self.assertTrue(self.calculator.is_holiday(datetime(2020, 12, 20)))
+
+    def test_is_invalid_date_holiday(self):
+        with self.assertRaises(TypeError):
+            self.calculator.is_holiday(datetime("year", 12, 20))
+        with self.assertRaises(TypeError):
+            self.calculator.is_holiday(datetime(2020, "month", 20))
+        with self.assertRaises(TypeError):
+            self.calculator.is_holiday(datetime(2020, 12, "day"))
 
     # test is_peak with times that are all peak times
     def test_is_time_peak(self):

@@ -38,11 +38,6 @@ class Calculator():
     def is_peak(self, t):
         return time(18) > t >= time(6)
 
-    def peak_period(self, start_time):
-        pass
-
-    def get_duration(self, start_time):
-        pass
 
     def get_endtime(self, start_date, start_time, duration):
         return datetime.strptime(start_date + ' ' + start_time, '%d/%m/%Y %H:%M') + timedelta(hours=duration)
@@ -69,13 +64,6 @@ class Calculator():
         api = requests.get('http://118.138.246.158/api/v1/weather?location=' + locationId + '&date=' + str(year) + '-' + m + '-' + d)
         return api.json()
 
-    # to be acquired through API
-    def get_sun_hour(self, sun_hour):
-        pass
-
-    # to be acquired through API
-    def get_solar_energy_duration(self, start_time):
-        pass
 
     # to be acquired through API
     def get_day_light_length(self, api):
