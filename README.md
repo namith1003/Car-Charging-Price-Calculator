@@ -1,5 +1,14 @@
 # FIT2107_S2_2021
 
+## Description of Application
+
+Created a Car Charging Calculator that tells the price to charge your car from a charging station while using 8 different varieties of charging configurations that the user selects and also takes to consideration the weather as the charging station consists of solar panels and takes the weather at the place that the charging is occurring at and the date and time of charging and calculates the total based on the off peak and peak times and whether or not the day is a holiday or a weekend.
+
+## Tests Created 
+
+Tests have been created using multiple different whitebox stategies and have been run through blackbox testing as well and test cases have an 80%+ coverage of the code and 
+network related or user input related test data, including weather information and data inputs have been Mocked to allow faster and more efficient test cases.
+
 ## Setting up and running the project via the terminal
 
 ### Enabling virtualenv
