@@ -1,4 +1,4 @@
-# FIT2107_S2_2021
+# EV Car Charging Price Calculator
 
 ## Description of Application
 
