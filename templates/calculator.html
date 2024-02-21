@@ -1,181 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>EV Calculator</title>
+<head>
+  <meta charset="UTF-8" />
+  <title>EV Calculator</title>
 
-    <!-- Inline style sheet -->
+  <!-- Enhanced styles -->
 
-    <style>
-      /* The Modal (background) */
-      .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0, 0, 0); /* Fallback color */
-        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  <style>
+    /* General styles */
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(120deg, #2980b9, #6dd5fa);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 20px;
+      font-size: 2em; /* twice the size */
+      padding-right: 20px; /* padding to the right */
+    }
+
+    form {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    table {
+      width: 100%;
+    }
+
+    td {
+      font-weight: bold;
+      padding: 10px 0;
+    }
+
+    label {
+      display: inline-block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="submit"],
+    input[type="reset"] {
+      width: calc(100% - 10px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: Arial, sans-serif;
+    }
+
+    input[type="submit"] {
+      background-color: #4caf50;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    input[type="reset"] {
+      background-color: #f44336;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="reset"]:hover {
+      background-color: #d32f2f;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin: 15% auto;
+      padding: 20px;
+      max-width: 300px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* Animation */
+    @keyframes fadein {
+      from {
+        opacity: 0;
       }
-
-      /* Modal Content */
-      .modal-content {
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        width: 80%;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
-          0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        -webkit-animation-name: animatetop;
-        -webkit-animation-duration: 0.4s;
-        animation-name: animatetop;
-        animation-duration: 0.4s;
+      to {
+        opacity: 1;
       }
+    }
 
-      /* Add Animation */
-      @-webkit-keyframes animatetop {
-        from {
-          top: -300px;
-          opacity: 0;
-        }
-        to {
-          top: 0;
-          opacity: 1;
-        }
+    @keyframes shake {
+      0% {
+        transform: translateX(0);
       }
-
-      @keyframes animatetop {
-        from {
-          top: -300px;
-          opacity: 0;
-        }
-        to {
-          top: 0;
-          opacity: 1;
-        }
+      25% {
+        transform: translateX(-5px);
       }
-
-      /* The Close Button */
-      .close {
-        color: white;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
+      50% {
+        transform: translateX(5px);
       }
-
-      .close:hover,
-      .close:focus {
-        color: #000;
-        text-decoration: none;
-        cursor: pointer;
+      75% {
+        transform: translateX(-5px);
       }
-
-      .modal-header {
-        padding: 2px 16px;
-        background-color: #5cb85c;
-        color: white;
+      100% {
+        transform: translateX(0);
       }
+    }
+  </style>
+</head>
 
-      .modal-body {
-        padding: 2px 16px;
-      }
+<body>
+  <h1>EV Calculator</h1>
+  <form action="#" method="post">
+   {{ form.csrf_token }}
+    <table>
+      <tbody>
+        <tr>
+          <td><label for="BatteryPackCapacity">Battery Pack Capacity</label></td>
+          <td>
+            <input type="text" name="BatteryPackCapacity" id="BatteryPackCapacity" />
+          </td>
+        </tr>
 
-      .modal-footer {
-        padding: 2px 16px;
-        background-color: #5cb85c;
-        color: white;
-      }
-    </style>
-  </head>
+        <tr>
+          <td><label for="InitialCharge">Initial Charge</label></td>
+          <td>
+            <input type="text" name="InitialCharge" id="InitialCharge" />
+          </td>
+        </tr>
 
-  <body>
-    <h1>EV Calculator</h1>
-    <form action="#" method="post">
-      {{ form.csrf_token() }}
+        <tr>
+          <td><label for="FinalCharge">Final Charge</label></td>
+          <td>
+            <input type="text" name="FinalCharge" id="FinalCharge" />
+          </td>
+        </tr>
+        <tr>
+          <td><label for="StartDate">Start Date</label></td>
+          <td>
+            <input type="text" name="StartDate" id="StartDate" placeholder="dd/mm/yyyy" />
+          </td>
+        </tr>
 
-      <table>
-        <tbody>
-          <tr>
-            <td>{{ form.BatteryPackCapacity.label }}</td>
-            <td>
-              {# {{ form.BatteryPackCapacity }}#}
-              <input type="text" name="BatteryPackCapacity" id="BatteryPackCapacity"/>
-            </td>
-          </tr>
+        <tr>
+          <td><label for="StartTime">Start Time</label></td>
+          <td>
+            <input type="text" name="StartTime" id="StartTime" placeholder="HH:MM" />
+          </td>
+        </tr>
 
-          <tr>
-            <td>{{ form.InitialCharge.label }}</td>
-            <td>
-              {# {{ form.InitialCharge }}#}
-              <input type="text" name="InitialCharge" id="InitialCharge" />
-            </td>
-          </tr>
+        <tr>
+          <td><label for="ChargerConfiguration">Charger Configuration</label></td>
+          <td>
+            <input type="text" name="ChargerConfiguration" id="ChargerConfiguration" />
+          </td>
+        </tr>
 
-          <tr>
-            <td>{{ form.FinalCharge.label }}</td>
-            <td>
-              {# {{ form.FinalCharge }}#}
-              <input type="text" name="FinalCharge" id="FinalCharge" />
-            </td>
-          </tr>
-          <tr>
-            <td>{{ form.StartDate.label }}</td>
-            <td>
-              {# {{ form.StartDate }}#}
-              <input type="text" name="StartDate" id="StartDate" placeholder="dd/mm/yyyy"/>
-            </td>
-          </tr>
+        <tr>
+          <td><label for="PostCode">Post Code</label></td>
+          <td>
+            <input type="text" name="PostCode" id="PostCode" />
+          </td>
+        </tr>
 
-          <tr>
-            <td>{{ form.StartTime.label }}</td>
-            <td>
-              {# {{ form.StartTime }}#}
-              <input type="text" name="StartTime" id="StartTime" placeholder="HH:MM"/>
-            </td>
-          </tr>
+        <tr>
+          <td>
+	    <input type="submit" value="Submit" style="float: left; margin-right: 10px;" />
+         </td>
+          <td>
+            <input type="reset" value="Reset" style="float: left; color: white;" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
 
-          <tr>
-            <td>{{ form.ChargerConfiguration.label }}</td>
-            <td>
-              {# {{ form.ChargerConfiguration }}#}
-              <input type="text" name="ChargerConfiguration" id="ChargerConfiguration"/>
-            </td>
-          </tr>
-
-          <tr>
-            <td>{{ form.PostCode.label }}</td>
-            <td>
-              {# {{ form.PostCode }}#}
-              <input type="text" name="PostCode" id="PostCode" />
-            </td>
-          </tr>
-
-          <tr>
-            <td>Click to submit:</td>
-            <td>
-              <input type="submit" value="Submit" />
-            </td>
-          </tr>
-
-          <tr>
-            <td>Click to reset:</td>
-            <td>
-              <input type="reset" value="Reset" style="color: red" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
-
-    <!--This part needs to be modified for the pop up message window-->
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
+  <!-- Modal -->
+  <div id="myModal" class="modal">
       <!-- Modal content -->
 
       <div class="modal-content">
@@ -243,5 +284,5 @@
         }
       }
     </script>
-  </body>
+</body>
 </html>
