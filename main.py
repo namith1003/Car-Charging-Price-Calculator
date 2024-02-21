@@ -1,29 +1,23 @@
 from flask import Flask, flash
-from flask import render_template
-from flask import request
-from app.calculator import *
-
-from app.calculator_form import *
+from flask import render_template, request
+from flask_wtf.csrf import CSRFProtect
+from app.calculator import Calculator
+from app.calculator_form import Calculator_Form
+from datetime import datetime, timedelta
 import os
-SECRET_KEY = os.urandom(32)
 
 ev_calculator_app = Flask(__name__)
-ev_calculator_app.config['SECRET_KEY'] = SECRET_KEY
+ev_calculator_app.config['SECRET_KEY'] = os.urandom(32)
 
+csrf = CSRFProtect(ev_calculator_app)
 
 @ev_calculator_app.route('/', methods=['GET', 'POST'])
 def operation_result():
-    # request.form looks for:
-    # html tags with matching "name="
-
     calculator_form = Calculator_Form(request.form)
 
-    # validation of the form
     if request.method == "POST" and calculator_form.validate():
-        # if valid, create calculator to calculate the time and cost
         calculator = Calculator()
 
-        # extract information from the form
         battery_capacity = request.form['BatteryPackCapacity']
         initial_charge = request.form['InitialCharge']
         final_charge = request.form['FinalCharge']
@@ -32,7 +26,6 @@ def operation_result():
         charger_configuration = request.form['ChargerConfiguration']
         postcode = request.form['PostCode']
 
-        # list of values based of charger_configuration
         power = [2, 3.6, 7.2, 11, 22, 36, 90, 350]
         base_price = [5, 7.5, 10, 12.5, 15, 20, 30, 50]
 
@@ -40,16 +33,13 @@ def operation_result():
         start_point = datetime.strptime(start_date + ' ' + start_time, '%d/%m/%Y %H:%M')
         end_point = calculator.get_endtime(start_date, start_time, time)                    
                 
-        # you may change the logic as your like
         costs = 0
 
-        # loops for the 3 different years
         for point in [start_point, start_point.replace(year=start_point.year-1), start_point.replace(year=start_point.year-2)]:
             current = point.date()
             api = calculator.get_api(postcode, str(point.date()))
             is_holiday = calculator.is_holiday(point.date())
             while point < end_point:
-                # if date changes, update api and is_holiday
                 if point.date() != current:
                     is_holiday = calculator.is_holiday(point.date())
                     api = calculator.get_api(postcode, str(point.date()))
@@ -63,28 +53,16 @@ def operation_result():
                     net = 0
 
                 costs += calculator.cost_calculation(net, base_price[int(charger_configuration)-1], is_peak, is_holiday)
-                # increments by 1 minute
                 point += timedelta(minutes=1)
-            # sets new end_point based on the year
             end_point = end_point.replace(year = end_point.year - 1)
 
-        # get average costs of the 3 years
         cost = costs/3
 
-        # you may change the return statement also
-        
-        # values of variables can be sent to the template for rendering the webpage that users will see
-        return render_template('calculator.html', cost = '$' + "{:.2f}".format(cost), time = "{:.2f}".format(time*60) + ' minutes', calculation_success = True, form = calculator_form)
-        # return render_template('calculator.html', calculation_success=True, form=calculator_form)
-
+        return render_template('calculator.html', cost='$' + "{:.2f}".format(cost), time="{:.2f}".format(time*60) + ' minutes', calculation_success=True, form=calculator_form)
     else:
-        # battery_capacity = request.form['BatteryPackCapacity']
-        # flash(battery_capacity)
-        # flash("something went wrong")
         flash_errors(calculator_form)
-        return render_template('calculator.html', calculation_success = False, form = calculator_form)
+        return render_template('calculator.html', calculation_success=False, form=calculator_form)
 
-# method to display all errors
 def flash_errors(form):
     """Flashes form errors"""
     for field, errors in form.errors.items():
@@ -93,7 +71,6 @@ def flash_errors(form):
                 getattr(form, field).label.text,
                 error
             ), 'error')
-
 
 if __name__ == '__main__':
     ev_calculator_app.run()
